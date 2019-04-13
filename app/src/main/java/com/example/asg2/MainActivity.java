@@ -5,10 +5,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import weka.classifiers.functions.supportVector.*;
+
+import java.io.InputStream;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,8 +30,31 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        svm();
     }
 
+
+    public void svm(){
+
+        //read model
+        InputStream inputStream = getResources().openRawResource(R.raw.model);
+        LoadModel loadModel = new LoadModel(inputStream);
+        List weightsBias = loadModel.read();
+
+        //read test data
+        inputStream = getResources().openRawResource(R.raw.test);
+        LoadTestData loadTestData = new LoadTestData(inputStream);
+        List testData = loadTestData.read();
+
+        //predict using svm
+        SVMClassifier svmClassify = new SVMClassifier(weightsBias);
+        double accuracy = svmClassify.predict(testData);
+
+        Log.d("accuray",accuracy+"");
+
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
